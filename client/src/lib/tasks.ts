@@ -1,16 +1,3 @@
-export interface Task {
-  id: number;
-  title: string;
-  icon: string;
-  points: number;
-  type: 'start' | 'check' | 'link';
-  status: 'incomplete' | 'completed' | 'claimed';
-  condition?: (user: IUser, account: any) => boolean; // Updated to accept account
-  url?: string;
-  successMessage?: string;
-  failureMessage?: string;
-}
-
 export const tasks: Task[] = [
   {
     id: 1,

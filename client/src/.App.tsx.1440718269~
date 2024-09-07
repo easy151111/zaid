@@ -17,10 +17,9 @@ import {
   Routes,
 } from 'react-router-dom';
 
-import { useUserContext } from "./context/AuthContext";
 import { routes } from './routes.tsx';
 import { Topbar } from "./components"
-import SplashScreen from "./components/SplashScreen";
+import SplashScreen from "../components/SplashScreen";
 
 import './globals.css';
 
@@ -29,8 +28,7 @@ export const App: FC = () => {
   const miniApp = useMiniApp();
   const themeParams = useThemeParams();
   const viewport = useViewport();
-  const { isLoading } = useUserContext();
-
+  
   useEffect(() => {
     return bindMiniAppCSSVars(miniApp, themeParams);
   }, [miniApp, themeParams]);

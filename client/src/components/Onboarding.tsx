@@ -13,7 +13,7 @@ const Onboarding = () => {
   const start_param = lp.initData?.startParam;
   const telegramId = initData?.user.id;
   const navigate = useNavigate();
-  
+
   const [progress, setProgress] = useState(0); // Manage the onboarding steps
   const [loading, setLoading] = useState(false);
   const [points, setPoints] = useState(0);
@@ -38,7 +38,7 @@ const Onboarding = () => {
     // Cleanup timeouts when the component unmounts
     return () => timeouts.forEach(timeout => clearTimeout(timeout));
   }, []);
-  
+
   const handleContinue = async () => {
     try {
       if (progress === 0) {
@@ -131,16 +131,16 @@ const Onboarding = () => {
         {progress === 1 && (
           <div className="h-[25rem]">
             <h1 className="text-3xl font-bold mb-4 text-white">Analysing Your Profile</h1>
-            
+
             <div className="flex justify-center items-center w-full h-full">
               <div className="loader"></div>
             </div>
-            
+
             <div className="w-full text-center text-white space-y-2 font-bold">
               {step === 1 && <p>Checking Telegram Age...</p>}
-              
+
               {step === 2 && <p>Verifying your Premium Status...</p>}
-              
+
               {step === 3 && <p>Awarding your Bonus for joining Rats Kingdom...</p>}
 
               {step === 4 && <p>Completed</p>}
@@ -159,7 +159,7 @@ const Onboarding = () => {
 
         )}
       </div>
-      
+
       {loading ? (
         <div className="w-full flex justify-center items-center invert-white">
           <Loader2 />

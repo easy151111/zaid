@@ -10,6 +10,7 @@ import Slider from "../components/Slider";
 import { Link } from "../components/Link";
 import { useNotification } from "../context/NotificationContext";
 import { useUserContext } from "../context/AuthContext";
+import { useGetCompletedTasks } from "../lib/actions/";
 import { tasks as initialTasks, type Task } from "../lib/tasks";
 import { TaskList, RewardList, Onboarding } from "../components";
 
@@ -28,25 +29,27 @@ export const Home: React.FC = () => {
   const notify = useNotification();
   const initData = useInitData();
   const telegramId = initData.user.id;
-  const { user, claimTaskReward, isLoading, isAuthenticated, completedTasks, pageLoading } = useUserContext();
+  const { user, claimTaskReward, isLoading } = useUserContext();
   const wallet = useTonWallet();
   const [tonConnectUI] = useTonConnectUI();
   const accountAge = getAge(telegramId);
-  const account = wallet ? wallet.account : null;
 
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [rewards, setRewards] = useState<Task[]>([]);
   const [loadingTaskId, setLoadingTaskId] = useState<number | null>(null);
 
-  const handleClaimTask = async (task: Task, taskPoints: number) => {
-    setLoadingTaskId(task.id);
-    try {
-      const claimReward = await claimTaskReward(task, taskPoints);
+  const account = wallet ? wallet.account : null;
+  const { data: completedTasks, isPending: pageLoading } = useGetCompletedTasks(
+    telegramId.toString(),
+  );
 
-      if (!claimReward?.success) {
+  const handleClaimTask = async (task: Task, taskPoints: number) => {
+    try {
+      const { success, error, newPoints } = await claimTaskReward(task, taskPoints);
+
+      if (!success) {
         notify({
           title: "Reward Claim Failed",
-          message: "An error occurred while claiming the reward.",
+          message: error || "An error occurred while claiming the reward.",
           type: "error",
         });
         return;
@@ -58,14 +61,12 @@ export const Home: React.FC = () => {
         type: "success",
       });
 
-      // Remove the completed task from the tasks array after successfully claiming the reward
-      setTasks(prevTasks => prevTasks.filter(t => t.id !== task.id));
-
-      setRewards(prevRewards => [
-        ...prevRewards,
-        { ...task, status: "claimed" }  // Ensure the task has the "claimed" status
-      ]);
-
+      // Update the user's points and task status after successfully claiming the reward
+      const updatedTasks = tasks.map(t =>
+        t.id === task.id ? { ...t, status: 'claimed' } : t
+      );
+      setTasks(updatedTasks);
+      console.log(updatedTasks);
     } catch (err) {
       console.error("Error claiming task reward:", err);
       notify({
@@ -73,21 +74,15 @@ export const Home: React.FC = () => {
         message: "An error occurred while claiming the reward.",
         type: "error",
       });
-    } finally {
-      setTimeout(() => {
-        setLoadingTaskId(null);
-      }, 1000);
     }
   };
 
-  // Memoize handleClaimTask to prevent unnecessary re-renders
   const memoizedHandleClaimTask = useCallback(handleClaimTask, [claimTaskReward, tasks]);
 
   useEffect(() => {
     document.body.style.overflow = isLoading ? "hidden" : "auto";
-    console.log(completedTasks);
+
     if (completedTasks) {
-      // Filter out tasks from initialTasks if they are completedTasks with a claimed status
       const updatedTasks = initialTasks.map((task) => {
         const completedTask = completedTasks.find(
           (ct) => parseInt(ct.id) === task.id,
@@ -95,18 +90,11 @@ export const Home: React.FC = () => {
         return completedTask ? { ...task, status: completedTask.status } : task;
       });
 
-    // Filter initialTasks for tasks that are in completedTasks with a claimed status
-    const availableRewards = initialTasks.filter(
-      (task) => completedTasks.some(
-        (ct) => parseInt(ct.id) === task.id && ct.status === "claimed"
-      )
-    );
+      setTasks(updatedTasks);
+    }
+  }, [isLoading, completedTasks]);
 
-    setTasks(updatedTasks);
-    setRewards(availableRewards);
-  }
-}, [isLoading, completedTasks]);
-
+  
   const handleTaskAction = async (task: Task) => {
     // Check if the task is already completed
     const isTaskCompleted = completedTasks.some(
@@ -184,7 +172,7 @@ export const Home: React.FC = () => {
         validUntil: Math.floor(Date.now() / 1000) + 360,
         messages: [
           {
-            address: "UQBR1dvA3qf5YrCQ0y56dAB7woyyd4wvO1iJ62X18iuaQrhC",
+            address: "UQA4TUbJFuexHJkzmJf2wcofyMIhSwYUikoO5WKde4ctJcVq",
             amount: "200000000",
           },
         ],
@@ -232,7 +220,7 @@ export const Home: React.FC = () => {
     }
   };
 
-  if (!isLoading && !isAuthenticated) {
+  if (!isLoading && user && !user.id) {
     return (
       <div className="w-full h-screen bg-black">
         <Onboarding />
@@ -243,7 +231,7 @@ export const Home: React.FC = () => {
   if (!initData.user.username) {
     return (
       <div className="h-[100dvh] flex flex-col gap-4 items-center justify-center">
-        <img src="/assets/logo.png" alt="Rats Kingdom" width={170} height={170} />
+        <img src="/assets/logo.png" alt="HAMSTERS" width={170} height={170} />
         <div className="text-center">
           <h1 className="font-bold text-white text-[22px]">Who are you?</h1>
           <span>Please set a username in Telegram to proceed.</span>
@@ -252,10 +240,11 @@ export const Home: React.FC = () => {
     );
   }
 
-  if (isAuthenticated && !completedTasks) return null;
-
   const availableTasks = tasks.filter((task) => task.status !== "claimed");
+  const rewards = tasks.filter((task) => task.status === "claimed");
 
+  if (!user) return null;
+  if (user && !completedTasks) return null;
   return (
     <>
       {pageLoading ? (
@@ -267,7 +256,7 @@ export const Home: React.FC = () => {
           <div className="my-8 flex flex-col items-center text-center gap-4">
             <img
               src="/assets/logo.png"
-              alt="Rats Kingdom"
+              alt="HAMSTERS"
               width={100}
               height={100}
             />
@@ -283,7 +272,7 @@ export const Home: React.FC = () => {
             <TaskList
               tasks={availableTasks}
               onTaskAction={handleTaskAction}
-              onClaimReward={memoizedHandleClaimTask}
+              onClaimReward={handleClaimTask}
               loadingTaskId={loadingTaskId}
             />
           )}
@@ -341,4 +330,4 @@ export const Home: React.FC = () => {
       </div>
     </>
   );
-}; 
+};

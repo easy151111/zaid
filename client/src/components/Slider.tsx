@@ -25,7 +25,7 @@ const Slider = () => {
       <SwiperSlide className="min-w-[19rem] max-w-[20rem]">
         <div className="w-full p-4 py-4 bg-[#1A1A1A] h-[8rem] flex flex-col justify-between items-start rounded-[20px]">
           <h1 className="font-bold text-[18px] leading-none text-white ">
-            SUBSRIBE YOUTUBE
+            SUBSCRIBE YOUTUBE
             <br />
             <span className="text-[16px]">
             Learn from videos
@@ -33,7 +33,7 @@ const Slider = () => {
           </h1>
 
           <button
-            onClick={() => window.open("https://youtube.com/@the_ratskingdom?feature=shared", "_blank")}
+            onClick={() => window.open("https://www.youtube.com/@the_ratskingdom?feature=shared", "_blank")}
             className="rounded-full p-2 px-4 font-semibold bg-white text-black"
           >
             View

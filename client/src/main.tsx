@@ -1,47 +1,16 @@
-import { SDKProvider, useLaunchParams } from '@telegram-apps/sdk-react';
-import React, { useMemo, useEffect } from "react";
-import ReactDOM from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
-import { TonConnectUIProvider } from '@tonconnect/ui-react';
+import { Buffer } from 'buffer';
 
-import { AuthProvider } from "./context/AuthContext";
-import { QueryProvider } from "./context/QueryProvider";
-import { NotificationProvider } from "./context/NotificationContext";
-import { App } from "./App";
+import ReactDOM from 'react-dom/client';
 
+import { Root } from './Root';
+
+// Uncomment this import in case, you would like to develop the application even outside
+// the Telegram application, just in your browser.
 import './mockEnv.ts';
 
-const Root = () => {
-  const manifestUrl = useMemo(() => {
-    return new URL('tonconnect-manifest.json', window.location.href).toString();
-  }, []);
+import './globals.css';
 
-  const debug = false; // or set this based on some condition
-  console.log(manifestUrl);
-  
-  useEffect(() => {
-    if (debug) {
-      import('eruda').then((lib) => lib.default.init());
-    }
-  }, [debug]);
-  
-  return (
-    <React.StrictMode>
-      <BrowserRouter>
-        <TonConnectUIProvider manifestUrl={manifestUrl}>
-          <SDKProvider acceptCustomStyles debug={debug}>
-            <QueryProvider>
-              <AuthProvider>
-                <NotificationProvider>
-                  <App />
-                </NotificationProvider>
-              </AuthProvider>
-            </QueryProvider>
-          </SDKProvider>
-        </TonConnectUIProvider>
-      </BrowserRouter>
-    </React.StrictMode>
-  );
-};
+// Make Buffer available globally
+window.Buffer = Buffer;
 
-ReactDOM.createRoot(document.getElementById("root")!).render(<Root />);
+ReactDOM.createRoot(document.getElementById('root')!).render(<Root/>);

@@ -1,15 +1,13 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useInitData } from '@telegram-apps/sdk-react';
-
-import { useGetUser, useGetLeaderboard, useGetUserFrens, useGetCompletedTasks } from "../lib/actions";
+import { useGetUser, useGetLeaderboard, useGetUserFrens } from "../lib/actions";
 
 const ENDPOINT = import.meta.env.VITE_API_ENDPOINT;
 
 export type IUser = {
   _id: string;
   id: string;
-  chatId: string;
   username: string;
   RATS: number;
   frens: string[];
@@ -20,7 +18,6 @@ export type IUser = {
 export const INITIAL_USER: IUser = {
   _id: "",
   id: "",
-  chatId: "",
   username: "",
   RATS: 0,
   frens: [],
@@ -32,8 +29,6 @@ const INITIAL_STATE: IContextType = {
   user: INITIAL_USER,
   currentUser: INITIAL_USER,  // Added `currentUser` to the initial state
   isLoading: true,
-  isAuthenticated: false,
-  setIsAuthenticated: () => {},
   setUser: () => {},
   checkAuthUser: async () => false as boolean,
   createUser: async () => {},
@@ -44,16 +39,11 @@ type IContextType = {
   user: IUser;
   currentUser: IUser;
   isLoading: boolean;
-  isCreatingAccount: boolean;
   setUser: React.Dispatch<React.SetStateAction<IUser>>;
-  isAuthenticated: boolean;
-  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
   checkAuthUser: () => Promise<boolean>;
   createUser: (user: IUser) => Promise<void>;
   claimTaskReward: (taskId: number) => Promise<void>;
   frens: any[];
-  completedTasks: any[];
-  pageLoading: boolean;
 };
 
 const AuthContext = createContext<IContextType>(INITIAL_STATE);
@@ -61,31 +51,24 @@ const AuthContext = createContext<IContextType>(INITIAL_STATE);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<IUser>(INITIAL_USER);
   const [isLoading, setIsLoading] = useState(true);
-  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  
+
   const initData = useInitData();
   const telegramId = initData.user.id;
 
   const { data: currentUser, isPending: isCheckingCurrentUser } = useGetUser(telegramId.toString() || "");
   const { data: leaderboard } = useGetLeaderboard(user?.id);
   const { data: frens } = useGetUserFrens(user?.id || "");
-  const { data: completedTasks, isPending: pageLoading } = useGetCompletedTasks(user?.id);
-
+  
   useEffect(() => {
     if (!isCheckingCurrentUser && currentUser) {
       setUser(currentUser);
-      if (currentUser.username) {
-         setIsAuthenticated(true);
-      }
     }
     setTimeout(() => {
       setIsLoading(false);
-    }, 3000);
+    }, 1000);
   }, [isCheckingCurrentUser, currentUser?.username]);
 
   const createUser = async (newUser: IUser, points: number) => {
-    setIsCreatingAccount(true);
     try {
       const response = await axios.post(`${ENDPOINT}/api/v1/createUser`, newUser);
 
@@ -136,7 +119,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser({
           _id: createdUser._id,
           id: createdUser.id,
-          chatId: createdUser.chatId,
           username: createdUser.username,
           RATS: Number(createdUser.RATS),
           frens: createdUser.frens,
@@ -144,12 +126,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           uplineBonus: createdUser.uplineBonus || 0, // Include uplineBonus
         });
 
-        // Update user points after successful reward claim
-        setUser({
-          ...user, // Spread the existing user data
-          RATS: Number(points),
-        });
-        
         return true;
       }
 
@@ -158,7 +134,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (axios.isAxiosError(error)) {
         console.error('Axios error:', error.response?.status, error.message);
         console.error('Response data:', error.response?.data);
-  
       } else {
         console.error('Unexpected error:', error);
       }
@@ -176,13 +151,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           telegramId,
           taskId: task.id,
           status: "claimed",
-        }
+        },
       );
 
       if (!claimRewardResponse || claimRewardResponse.error) {
         console.error(
           "Error claiming task reward:",
-          claimRewardResponse?.error || "Unknown error"
+          claimRewardResponse?.error || "Unknown error",
         );
         return { success: false, error: claimRewardResponse?.error };
       }
@@ -204,15 +179,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     user,
     setUser,
     currentUser,
-    completedTasks,
     leaderboard,
     frens,
     isLoading,
-    isCreatingAccount,
-    isAuthenticated,
     createUser,
     claimTaskReward,
-    pageLoading
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

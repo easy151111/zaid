@@ -19,7 +19,7 @@ export const Leaderboard: FC = () => {
       setLoading(false);
     }
   }, [leaderboard, user?.id]);
-
+  
 
   if (loading) {
     return (

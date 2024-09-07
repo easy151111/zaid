@@ -1,5 +1,6 @@
 import {
-  useQuery, 
+  useQuery,
+  useInfiniteQuery 
 } from '@tanstack/react-query';
 import { QUERY_KEYS } from './queryKeys';
 

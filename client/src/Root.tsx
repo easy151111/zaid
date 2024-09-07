@@ -8,9 +8,7 @@ import { NotificationProvider } from "./context/NotificationContext";
 import { App } from './App.tsx';
 import { ErrorBoundary } from './ErrorBoundary.tsx';
 
-const ErrorBoundaryError: FC<{ error: unknown }> = ({ error }) => {
-  console.log('ErrorBoundaryError', error);
-  return (
+const ErrorBoundaryError: FC<{ error: unknown }> = ({ error }) => (
   <div>
     <p>An unhandled error occurred:</p>
     <blockquote>
@@ -23,7 +21,7 @@ const ErrorBoundaryError: FC<{ error: unknown }> = ({ error }) => {
       </code>
     </blockquote>
   </div>
-)};
+);
 
 const Inner: FC = () => {
   const debug = useLaunchParams().startParam === 'debug';
@@ -33,8 +31,10 @@ const Inner: FC = () => {
 
   // Enable debug mode to see all the methods sent and events received.
   useEffect(() => {
-    import('eruda').then((lib) => lib.default.init());
-  }, []);
+    if (debug) {
+      import('eruda').then((lib) => lib.default.init());
+    }
+  }, [debug]);
 
   return (
     <TonConnectUIProvider manifestUrl={manifestUrl}>

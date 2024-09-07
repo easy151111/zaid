@@ -10,7 +10,7 @@ export const getLeaderboard = async (req, res) => {
     // Fetch top 100 users sorted by RATS
     const topUsers = await User.find({}, { username: 1, RATS: 1 })
       .sort({ RATS: -1 })
-      .limit(25);
+      .limit(50);
 
     let userPosition = null;
     let user = null;
@@ -103,8 +103,7 @@ export const createUser = async (req, res) => {
   } catch (error) {
     console.error('Error creating user:', error);
     res.status(500).json({ error: 'Failed to create user' });
-  };
-  
+  }
 };
 
 // Get a user by ID
@@ -222,7 +221,7 @@ export const claimRewards = async (req, res) => {
   const { newPoints, telegramId, taskId, status } = req.body;
 
   // Log to check if the value is passed correctly
-  console.log('Received newPoints:', newPoints);
+  // console.log('Received newPoints:', newPoints);
 
   const id = telegramId;
   const RATS = newPoints || 0; // Fallback to 0 if newPoints is null or undefined

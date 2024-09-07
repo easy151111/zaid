@@ -43,15 +43,15 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, loadingTaskId, onTaskAction,
                   className={`rounded-full font-medium ${task.type === 'check' ? 'bg-white text-black' : 'bg-[#1A1A1A] text-white'} h-[2.5rem] flex justify-center items-center px-4`}
                   disabled={loadingTaskId === task.id} // Disable the button if this task is loading
                 >
-                  {loadingTaskId === task.id ? (
-                    <Loader2 />
+                  {task.type === 'link' ? (
+                    <button
+                      onClick={() => window.open(task.url, "_blank")}>
+                      Start
+                    </button>
                   ) : (
                     <>
-                      {task.type === 'link' ? (
-                        <div
-                          onClick={() => window.open(task.url, "_blank")}>
-                          Start
-                        </div>
+                      {loadingTaskId === task.id ? (
+                        <Loader2 />
                       ) : (
                         <>
                           {task.type === 'check' ? 'Check' : 'Start'}
@@ -67,11 +67,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, loadingTaskId, onTaskAction,
                   onClick={() => onClaimReward(task, task.points)}
                   className="rounded-full font-medium text-black bg-white p-2 px-4"
                 >
-                  {loadingTaskId === task.id ? (
-                    <Loader2 />
-                  ) : (
-                    <>Claim</>
-                  )}
+                  Claim
                 </button>
               )}
             </div>
