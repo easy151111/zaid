@@ -6,8 +6,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { QueryProvider } from "./context/QueryProvider";
 import { NotificationProvider } from "./context/NotificationContext";
 import { App } from './App.tsx';
-import { clear
-       } from './ErrorBoundary.tsx';
+import { ErrorBoundary } from './ErrorBoundary.tsx';
 
 const ErrorBoundaryError: FC<{ error: unknown }> = ({ error }) => {
   console.log('ErrorBoundaryError', error);

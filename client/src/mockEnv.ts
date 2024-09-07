@@ -1,15 +1,22 @@
 import { mockTelegramEnv, parseInitData, retrieveLaunchParams } from '@telegram-apps/sdk-react';
 
+// It is important, to mock the environment only for development purposes. When building the
+// application, import.meta.env.DEV will become false, and the code inside will be tree-shaken,
+// so you will not see it in your final bundle.
 if (import.meta.env.DEV) {
-  let shouldMock = true;
+  let shouldMock: boolean;
 
+  // Try to extract launch parameters to check if the current environment is Telegram-based.
   try {
     // If we are able to extract launch parameters, it means that we are already in the
     // Telegram environment. So, there is no need to mock it.
     retrieveLaunchParams();
-    shouldMock = false;
+
+    // We could previously mock the environment. In case we did, we should do it again. The reason
+    // is the page could be reloaded, and we should apply mock again, because mocking also
+    // enables modifying the window object.
+    shouldMock = !!sessionStorage.getItem('____mocked');
   } catch (e) {
-    // If an error occurs, it means we are not in a Telegram environment and should mock.
     shouldMock = true;
   }
 
@@ -26,7 +33,7 @@ if (import.meta.env.DEV) {
       })],
       ['hash', '89d6079ad6762351f38c6dbbc41bb53048019256a9443988af7a48bcad16ba31'],
       ['auth_date', '1716922846'],
-      ['start_param', 'debug'],
+      ['start_param', '66bfe972df1b825f483e44c0'],
       ['chat_type', 'sender'],
       ['chat_instance', '8428209589180549439'],
     ]).toString();
@@ -54,11 +61,5 @@ if (import.meta.env.DEV) {
     });
     sessionStorage.setItem('____mocked', '1');
 
-<<<<<<< HEAD
-    console.info(
-      'Environment was mocked because it was not detected as Telegram-based. This mocking is for development purposes only. In production, this code will be tree-shaken and not included in the final bundle.',
-    );
-=======
->>>>>>> 2555042 (Update)
   }
 }

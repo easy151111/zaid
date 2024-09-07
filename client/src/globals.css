@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background: black;
+    padding: 0;
+    margin: 0;
+    user-select: none;
+    color: rgba(255, 255, 255, 0.5);
+  }
+}
+
+@layer utilities {
+  .link {
+    text-decoration: none;
+    color: white;
+  }
+
+  /* UTILITIES */
+  .invert-white {
+    @apply invert brightness-0 transition;
+  }
+}
+
+.swiper-pagination-bullet {
+  @apply bg-white;
+}
+
+.loader {
+  display: inline-flex;
+  gap: 10px;
+}
+.loader:before,
+.loader:after {
+  content: "";
+  height: 80px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    linear-gradient(#222 0 0) top/100% 40% no-repeat,
+    radial-gradient(farthest-side,#000 95%,#0000) 50%/8px 8px no-repeat
+    #fff;
+  animation: l7 1.5s infinite alternate ease-in;
+}
+@keyframes l7 {
+  0%,
+  70% {background-size:100% 40%,8px 8px}
+  85% {background-size:100% 120%,8px 8px}
+  100% {background-size:100% 40%,8px 8px}
+}
