@@ -55,7 +55,7 @@ export const App: FC = () => {
     return () => navigator.detach();
   }, [navigator]);
 
-  if (!user?.id) {
+  if (!isLoading && !user?.id) {
     return (
       <div className="w-full h-screen bg-black">
         <Onboarding />
