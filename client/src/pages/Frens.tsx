@@ -14,7 +14,7 @@ import { Loader } from "../components";  // Import your Loader component
 
 export const Frens: FC = () => {
   const { user, frens } = useUserContext();
-  const referralLink = `http://t.me/RATS_Bot/join?startapp=${user?._id}`;
+  const referralLink = `http://t.me/RatsKingdom_Bot/join?startapp=${user?._id}`;
 
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);  // Loading state
@@ -55,7 +55,7 @@ export const Frens: FC = () => {
 
             <img 
               src="/assets/logo.png"
-              alt="HAMSTERS"
+              alt="Rats Kingdom"
               width={170}
               height={170}
             />

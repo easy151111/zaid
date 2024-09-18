@@ -19,7 +19,7 @@ import {
 
 import { useUserContext } from "./context/AuthContext";
 import { routes } from './routes.tsx';
-import { Topbar } from "./components"
+import { Topbar, Onboarding } from "./components"
 import SplashScreen from "./components/SplashScreen";
 
 import './globals.css';
@@ -29,8 +29,8 @@ export const App: FC = () => {
   const miniApp = useMiniApp();
   const themeParams = useThemeParams();
   const viewport = useViewport();
-  const { isLoading } = useUserContext();
-
+  const { isLoading, user } = useUserContext();
+  
   useEffect(() => {
     return bindMiniAppCSSVars(miniApp, themeParams);
   }, [miniApp, themeParams]);
@@ -54,6 +54,14 @@ export const App: FC = () => {
     navigator.attach();
     return () => navigator.detach();
   }, [navigator]);
+
+  if (!user?.id) {
+    return (
+      <div className="w-full h-screen bg-black">
+        <Onboarding />
+      </div>
+    );
+  }
 
   return (
     <AppRoot

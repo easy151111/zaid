@@ -20,7 +20,7 @@ const SplashScreen = () => {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 1.8, repeat: Infinity, repeatType: "reverse" }}
         className="font-black text-[30px] text-white">
-        HAMSTERS
+        Rats Kingdom
       </motion.h1>
     </div>
   );

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { useInitData } from '@telegram-apps/sdk-react';
 import { useGetUser, useGetLeaderboard, useGetUserFrens } from "../lib/actions";
 
@@ -22,13 +22,14 @@ export const INITIAL_USER: IUser = {
   RATS: 0,
   frens: [],
   tasks: [],
-  uplineBonus: 0,  // Missing field added
+  uplineBonus: 0,
 };
 
 const INITIAL_STATE: IContextType = {
   user: INITIAL_USER,
-  currentUser: INITIAL_USER,  // Added `currentUser` to the initial state
+  currentUser: INITIAL_USER,
   isLoading: true,
+  isCreatingAccount: false, // Added isCreatingAccount state
   setUser: () => {},
   checkAuthUser: async () => false as boolean,
   createUser: async () => {},
@@ -39,10 +40,11 @@ type IContextType = {
   user: IUser;
   currentUser: IUser;
   isLoading: boolean;
+  isCreatingAccount: boolean; // Loading state for account creation
   setUser: React.Dispatch<React.SetStateAction<IUser>>;
   checkAuthUser: () => Promise<boolean>;
-  createUser: (user: IUser) => Promise<void>;
-  claimTaskReward: (taskId: number) => Promise<void>;
+  createUser: (user: IUser, points: number) => Promise<boolean>;
+  claimTaskReward: (taskId: number) => Promise<{ success: boolean; newPoints?: number }>;
   frens: any[];
 };
 
@@ -51,6 +53,7 @@ const AuthContext = createContext<IContextType>(INITIAL_STATE);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<IUser>(INITIAL_USER);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false); // Added for account creation loading state
 
   const initData = useInitData();
   const telegramId = initData.user.id;
@@ -58,7 +61,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { data: currentUser, isPending: isCheckingCurrentUser } = useGetUser(telegramId.toString() || "");
   const { data: leaderboard } = useGetLeaderboard(user?.id);
   const { data: frens } = useGetUserFrens(user?.id || "");
-  
+
   useEffect(() => {
     if (!isCheckingCurrentUser && currentUser) {
       setUser(currentUser);
@@ -66,9 +69,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
-  }, [isCheckingCurrentUser, currentUser?.username]);
+  }, [isCheckingCurrentUser, currentUser]);
 
-  const createUser = async (newUser: IUser, points: number) => {
+  const createUser = useCallback(async (newUser: IUser, points: number): Promise<boolean> => {
+    setIsCreatingAccount(true); // Start loading state
     try {
       const response = await axios.post(`${ENDPOINT}/api/v1/createUser`, newUser);
 
@@ -87,13 +91,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           status: 'completed',
         });
 
-        if (
-          (!completeAgeTask && !completePremiumTask) || 
-          completeAgeTask?.error || 
-          completePremiumTask?.error
-        ) {
-          console.error('Task completion failed:', completeAgeTask?.error || completePremiumTask?.error || 'Unknown error');
-          return;
+        if (completeAgeTask?.error || completePremiumTask?.error) {
+          console.error('Task completion failed:', completeAgeTask?.error || completePremiumTask?.error);
+          return false;
         }
 
         const claimAgeReward = await axios.post(`${ENDPOINT}/api/v1/claimRewards`, {
@@ -110,70 +110,62 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           status: 'claimed',
         });
 
-        if (claimAgeReward.error || claimPremiumReward.error) {
-          console.error('Reward claim failed:', claimAgeReward.error || claimPremiumReward.error || 'Unknown error');
-          return;
+        if (claimAgeReward?.error || claimPremiumReward?.error) {
+          console.error('Reward claim failed:', claimAgeReward?.error || claimPremiumReward?.error);
+          return false;
         }
 
-        console.log('User created successfully:', createdUser);
         setUser({
           _id: createdUser._id,
           id: createdUser.id,
           username: createdUser.username,
-          RATS: Number(createdUser.RATS),
+          RATS: Number(points),
           frens: createdUser.frens,
           tasks: createdUser.tasks,
-          uplineBonus: createdUser.uplineBonus || 0, // Include uplineBonus
+          uplineBonus: createdUser.uplineBonus || 0,
         });
 
         return true;
       }
-
       return false;
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('Axios error:', error.response?.status, error.message);
-        console.error('Response data:', error.response?.data);
       } else {
         console.error('Unexpected error:', error);
       }
       return false;
+    } finally {
+      setIsCreatingAccount(false); // Stop loading state
     }
-  };
+  }, [telegramId]);
 
-  const claimTaskReward = async (task: any, taskPoints: number) => {
+  const claimTaskReward = useCallback(async (task: any, taskPoints: number): Promise<{ success: boolean; newPoints?: number }> => {
     try {
       const newPoints = user?.RATS + taskPoints;
-      const claimRewardResponse = await axios.post(
-        `${ENDPOINT}/api/v1/claimRewards`,
-        {
-          newPoints,
-          telegramId,
-          taskId: task.id,
-          status: "claimed",
-        },
-      );
-
-      if (!claimRewardResponse || claimRewardResponse.error) {
-        console.error(
-          "Error claiming task reward:",
-          claimRewardResponse?.error || "Unknown error",
-        );
-        return { success: false, error: claimRewardResponse?.error };
-      }
-
-      // Update user points after successful reward claim
-      setUser({
-        ...user, // Spread the existing user data
-        RATS: Number(newPoints),
+      const claimRewardResponse = await axios.post(`${ENDPOINT}/api/v1/claimRewards`, {
+        newPoints,
+        telegramId,
+        taskId: task.id,
+        status: "claimed",
       });
 
-      return { success: true, newPoints }; // Return success and new points
+      if (claimRewardResponse?.error) {
+        console.error("Error claiming task reward:", claimRewardResponse.error);
+        return { success: false, error: claimRewardResponse.error };
+      }
+
+      setUser((prevUser) => ({
+        ...prevUser,
+        RATS: newPoints,
+      }));
+
+      return { success: true, newPoints };
     } catch (error) {
       console.error("Error claiming task reward:", error);
       return { success: false, error };
     }
-  };
+  }, [user, telegramId]);
 
   const value = {
     user,
@@ -182,6 +174,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     leaderboard,
     frens,
     isLoading,
+    isCreatingAccount, // Pass isCreatingAccount to the context
     createUser,
     claimTaskReward,
   };
