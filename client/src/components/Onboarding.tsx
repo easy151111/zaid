@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLaunchParams, useInitData } from '@telegram-apps/sdk-react';
 
+import getAge from '../age/idage';
 import { useUserContext } from '../context/AuthContext';
 import { tasks as initialTasks, type Task } from '../lib/tasks';
 import Loader2 from "./Loader2";
@@ -52,7 +53,8 @@ const Onboarding = () => {
           return;
         }
 
-        const accountAge = initData.user.accountAge || 1;
+        const data = getAge(telegramId);
+        const accountAge = data.age || 1;
         const coins = calculateCoins(accountAge);
         const taskPoints = initData.user.isPremium ? coins + telegramPremiumTask?.points : coins;
 
