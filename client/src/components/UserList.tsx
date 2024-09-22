@@ -7,7 +7,7 @@ type UserListProps = {
 const UserList = ({
   users,
 }: UserListProps) => {
-  
+
   return (
     <>
       {users.map((item, index) => (
@@ -23,7 +23,7 @@ const UserList = ({
               <h1 className="text-white font-medium text-[15px]">
                 {item.username}
               </h1>
-              <span className="font-semibold">{item.RATS} RATS</span>
+              <span className="font-semibold">{item.LIONS} LIONS</span>
             </div>
           </div>
 
@@ -52,7 +52,7 @@ const UserList = ({
             {index > 2 && (
               <span className="text-white font-semibold">#{index + 1}</span>
             )}
-                  
+
           </span>
         </div>
       ))}

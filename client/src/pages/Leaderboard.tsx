@@ -19,7 +19,7 @@ export const Leaderboard: FC = () => {
       setLoading(false);
     }
   }, [leaderboard, user?.id]);
-  
+
 
   if (loading) {
     return (
@@ -56,7 +56,7 @@ export const Leaderboard: FC = () => {
               <h1 className="text-white font-medium text-[15px]">
                 {user?.username}
               </h1>
-              <span className="font-semibold">{user?.RATS} RATS</span>
+              <span className="font-semibold">{user?.LIONS} LIONS</span>
             </div>
           </div>
 

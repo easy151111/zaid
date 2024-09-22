@@ -10,7 +10,7 @@ export type IUser = {
   _id: string;
   id: string;
   username: string;
-  RATS: number;
+  LIONS: number;
   frens: string[];
   tasks: [];
   uplineBonus: number;

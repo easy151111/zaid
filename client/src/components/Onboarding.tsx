@@ -12,7 +12,7 @@ const Onboarding = () => {
   const { createUser, isCreatingAccount } = useUserContext();
   const startParam = lp.initData?.startParam || null;
   const telegramId = initData?.user?.id || null;
-  
+
   const [progress, setProgress] = useState(0);
   const [loading, setLoading] = useState(false);
   const [points, setPoints] = useState(0);
@@ -66,7 +66,7 @@ const Onboarding = () => {
         const newUser = {
           id: telegramId,
           username: initData.user.username || 'NewUser',
-          RATS: 0,
+          LIONS: 0,
           frens: [],
           referralId: startParam,
           uplineBonus: Math.floor(points * 0.1),
@@ -94,12 +94,12 @@ const Onboarding = () => {
     <div className="w-screen h-[100dvh] flex flex-col justify-between bg-black fixed top-0 left-0 z-[1000] p-4">
       <div className="h-full flex flex-col items-center justify-center text-center">
         {progress !== 1 && (
-          <img src="/assets/logo.png" alt="Rats Kingdom" width={170} height={170} />
+          <img src="/assets/logo.png" alt="LIONS" width={170} height={170} />
         )}
 
         {progress === 0 && (
           <>
-            <h1 className="text-3xl font-bold mb-4 text-white">Welcome to RATS</h1>
+            <h1 className="text-3xl font-bold mb-4 text-white">Welcome to LIONS</h1>
             <p>Get rewarded for your Telegram account age and invite friends to earn more.</p>
           </>
         )}
@@ -113,7 +113,7 @@ const Onboarding = () => {
             <div className="w-full text-center text-white space-y-2 font-bold">
               {step === 1 && <p>Checking Telegram Age...</p>}
               {step === 2 && <p>Verifying your Premium Status...</p>}
-              {step === 3 && <p>Awarding your Bonus for joining Rats Kingdom...</p>}
+              {step === 3 && <p>Awarding your Bonus for joining LIONS...</p>}
               {step === 4 && <p>Completed</p>}
             </div>
           </div>
@@ -121,8 +121,8 @@ const Onboarding = () => {
 
         {progress === 2 && (
           <>
-            <h1 className="text-3xl font-bold mb-4 text-white">{points} RATS</h1>
-            <p>You've earned {points} RATS for joining us! Earn more RATS by completing tasks and referring friends.</p>
+            <h1 className="text-3xl font-bold mb-4 text-white">{points} LIONS</h1>
+            <p>You've earned {points} LIONS for joining us! Earn more LIONS by completing tasks and referring friends.</p>
           </>
         )}
       </div>

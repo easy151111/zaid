@@ -11,9 +11,9 @@ export const getLeaderboard = async (req, res) => {
   try {
     const { userId } = req.query;
 
-    // Fetch top 100 users sorted by RATS, projecting only required fields
-    const topUsers = await User.find({}, { username: 1, RATS: 1 })
-      .sort({ RATS: -1 })
+    // Fetch top 100 users sorted by LIONS, projecting only required fields
+    const topUsers = await User.find({}, { username: 1, LIONS: 1 })
+      .sort({ LIONS: -1 })
       .limit(100);
 
     let userPosition = null;
@@ -21,9 +21,9 @@ export const getLeaderboard = async (req, res) => {
 
     // Check if the user is outside the top 100
     if (userId) {
-      user = await User.findOne({ id: userId }, { username: 1, RATS: 1 });
+      user = await User.findOne({ id: userId }, { username: 1, LIONS: 1 });
       if (user) {
-        const higherUsersCount = await User.countDocuments({ RATS: { $gt: user.RATS } });
+        const higherUsersCount = await User.countDocuments({ LIONS: { $gt: user.LIONS } });
         userPosition = higherUsersCount + 1;
       }
     }
@@ -44,7 +44,7 @@ export const getLeaderboard = async (req, res) => {
 
 // Create a new user
 export const createUser = async (req, res) => {
-  const { id, username, RATS, referralId, uplineBonus } = req.body;
+  const { id, username, LIONS, referralId, uplineBonus } = req.body;
 
   try {
     // Validate input data
@@ -63,7 +63,7 @@ export const createUser = async (req, res) => {
     const newUser = await User.create({
       id,
       username,
-      RATS: RATS || 0, // Default RATS to 0 if not provided
+      LIONS: LIONS || 0, // Default LIONS to 0 if not provided
       frens: [],
       uplineBonus: 0,
     });
@@ -76,7 +76,7 @@ export const createUser = async (req, res) => {
         // Check if referral bonus has already been applied to avoid duplicate bonuses
         if (!referringUser.frens.includes(newUser._id)) {
           referringUser.frens.push(newUser._id);
-          referringUser.RATS += uplineBonus;
+          referringUser.LIONS += uplineBonus;
           newUser.uplineBonus = uplineBonus;
 
           // Save both referringUser and newUser in parallel (to save time)
@@ -217,7 +217,7 @@ export const claimRewards = async (req, res) => {
     task.status = status;
     await task.save();
 
-    user.RATS += newPoints;
+    user.LIONS += newPoints;
     await user.save();
 
     res.status(200).json({ message: 'Rewards claimed successfully', user });

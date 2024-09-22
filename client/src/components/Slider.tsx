@@ -17,15 +17,15 @@ const Slider = () => {
       description: "Learn from videos",
       action: {
         text: "View",
-        onClick: () => window.open("https://www.youtube.com/@the_ratskingdom?feature=shared", "_blank"),
+        onClick: () => window.open("https://www.youtube.com/@LIONS?feature=shared", "_blank"),
       },
     },
     {
-      title: "JOIN RATS KINGDOM",
+      title: "JOIN LIONS KINGDOM",
       description: "Home for Telegram OGs",
       action: {
         text: "Join",
-        link: "https://t.me/The_RatsKingdom",
+        link: "https://t.me/LIONS",
       },
     },
     {
@@ -33,7 +33,7 @@ const Slider = () => {
       description: "Stay updated with the latest news",
       action: {
         text: "Follow",
-        onClick: () => window.open("https://x.com/The_RatsKingdom", "_blank"),
+        onClick: () => window.open("https://x.com/LIONS", "_blank"),
       },
     },
   ], []);

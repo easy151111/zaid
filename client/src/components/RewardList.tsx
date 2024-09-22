@@ -36,7 +36,7 @@ const RewardList: React.FC<RewardListProps> = ({ tasks, premium, age }) => {
             <div>
               <h1 className="text-white font-medium text-[14px]">
                 {/* Handle special case for task id = 2 */}
-                {id === 2 && !premium ? `+0 RATS` : `+${points} RATS`}
+                {id === 2 && !premium ? `+0 LIONS` : `+${points} LIONS`}
               </h1>
             </div>
           </div>

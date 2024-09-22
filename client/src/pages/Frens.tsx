@@ -14,7 +14,7 @@ import { Loader } from "../components";  // Import your Loader component
 
 export const Frens: FC = () => {
   const { user, frens } = useUserContext();
-  const referralLink = `http://t.me/RatsKingdom_Bot/join?startapp=${user?._id}`;
+  const referralLink = `http://t.me/LIONS_Bot/join?startapp=${user?._id}`;
 
   const [copied, setCopied] = useState(false);
   const [loading, setLoading] = useState(true);  // Loading state
@@ -35,7 +35,7 @@ export const Frens: FC = () => {
   };
 
   const handleShareLink = () => {
-    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=Join%20me%20and%20earn%20RATS%20using%20this%20link!`;
+    const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=Join%20me%20and%20earn%20LIONS%20using%20this%20link!`;
     window.open(telegramUrl, '_blank');
   };
 
@@ -50,12 +50,12 @@ export const Frens: FC = () => {
           <div className="my-8 flex flex-col items-center text-center gap-4">
             <div className="leading-none font-bold text-white text-[32px]">
               <h1>Invite friends</h1>
-              <h2>and get more RATS</h2>
+              <h2>and get more LIONS</h2>
             </div>
 
             <img 
               src="/assets/logo.png"
-              alt="Rats Kingdom"
+              alt="LIONS"
               width={170}
               height={170}
             />
@@ -89,7 +89,7 @@ export const Frens: FC = () => {
                         </button>
                       </div>
 
-                      <span>Invite friends to get more RATS</span>
+                      <span>Invite friends to get more LIONS</span>
                     </ModalContent>
                   </ModalBody>
                 </Modal>
@@ -107,7 +107,7 @@ export const Frens: FC = () => {
                     </div>
 
                     <span className="text-white font-semibold">
-                      +{fren.uplineBonus} RATS
+                      +{fren.uplineBonus} LIONS
                     </span>
                   </div>
                 ))}
@@ -140,7 +140,7 @@ export const Frens: FC = () => {
                       </button>
                     </div>
 
-                    <span>Invite friends to get more RATS</span>
+                    <span>Invite friends to get more LIONS</span>
                   </ModalContent>
                 </ModalBody>
               </Modal>

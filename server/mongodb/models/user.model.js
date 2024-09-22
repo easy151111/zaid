@@ -13,7 +13,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  RATS: {
+  LIONS: {
     type: Number,
     required: true,
   },

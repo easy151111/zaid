@@ -16,7 +16,7 @@ export interface IUser {
   _id: string;
   id: string;
   username: string;
-  RATS: number;
+  LIONS: number;
   frens: string[];
   tasks: any[];
 }
@@ -29,7 +29,7 @@ export const Home: React.FC = () => {
   const wallet = useTonWallet();
   const [tonConnectUI] = useTonConnectUI();
   const accountAge = getAge(telegramId);
-  
+
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [loadingTaskId, setLoadingTaskId] = useState<number | null>(null);
 
@@ -103,7 +103,7 @@ export const Home: React.FC = () => {
             return; // Do not proceed if the transaction fails
           }
         }
-        
+
 
         if (task.type === "check" && task.condition && !task.condition(user, account)) {
           notify({ title: "Task Failed", message: task.failureMessage || "Task conditions not met.", type: "error" });
@@ -148,7 +148,7 @@ export const Home: React.FC = () => {
       return false; // Return false if there's an error
     }
   };
-  
+
 
   useEffect(() => {
     document.body.style.overflow = isLoading ? "hidden" : "auto";
@@ -172,7 +172,7 @@ export const Home: React.FC = () => {
   if (!initData.user.username) {
     return (
       <div className="h-[100dvh] flex flex-col gap-4 items-center justify-center">
-        <img src="/assets/logo.png" alt="HAMSTERS" width={170} height={170} />
+        <img src="/assets/logo.png" alt="LIONS" width={170} height={170} />
         <div className="text-center">
           <h1 className="font-bold text-white text-[22px]">Who are you?</h1>
           <span>Please set a username in Telegram to proceed.</span>
@@ -184,10 +184,10 @@ export const Home: React.FC = () => {
   return (
     <>
       <div className="my-8 flex flex-col items-center text-center gap-4">
-        <img src="/assets/logo.png" alt="HAMSTERS" width={100} height={100} />
+        <img src="/assets/logo.png" alt="LIONS" width={100} height={100} />
         <div className="leading-none font-bold text-white text-[30px]">
-          <AnimatedCounter from={0} to={user?.RATS || 0} />
-          <h2 className="text-white/50 text-[24px]">RATS</h2>
+          <AnimatedCounter from={0} to={user?.LIONS || 0} />
+          <h2 className="text-white/50 text-[24px]">LIONS</h2>
         </div>
       </div>
 

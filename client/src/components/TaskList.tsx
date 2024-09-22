@@ -49,7 +49,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, loadingTaskId, onTaskAction,
 
               <div>
                 <h1 className="text-white font-medium text-[15px]">{task.title}</h1>
-                <span>+{task.points} RATS</span>
+                <span>+{task.points} LIONS</span>
               </div>
             </div>
 

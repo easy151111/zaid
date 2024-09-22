@@ -9,7 +9,7 @@ export type IUser = {
   _id: string;
   id: string;
   username: string;
-  RATS: number;
+  LIONS: number;
   frens: string[];
   tasks: [];
   uplineBonus: number;
@@ -19,7 +19,7 @@ export const INITIAL_USER: IUser = {
   _id: "",
   id: "",
   username: "",
-  RATS: 0,
+  LIONS: 0,
   frens: [],
   tasks: [],
   uplineBonus: 0,
@@ -119,7 +119,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           _id: createdUser._id,
           id: createdUser.id,
           username: createdUser.username,
-          RATS: Number(points),
+          LIONS: Number(points),
           frens: createdUser.frens,
           tasks: createdUser.tasks,
           uplineBonus: createdUser.uplineBonus || 0,
@@ -142,7 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const claimTaskReward = useCallback(async (task: any, taskPoints: number): Promise<{ success: boolean; newPoints?: number }> => {
     try {
-      const newPoints = user?.RATS + taskPoints;
+      const newPoints = user?.LIONS + taskPoints;
       const claimRewardResponse = await axios.post(`${ENDPOINT}/api/v1/claimRewards`, {
         newPoints,
         telegramId,
@@ -157,7 +157,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setUser((prevUser) => ({
         ...prevUser,
-        RATS: newPoints,
+        LIONS: newPoints,
       }));
 
       return { success: true, newPoints };
