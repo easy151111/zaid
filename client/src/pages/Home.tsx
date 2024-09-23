@@ -10,7 +10,7 @@ import { useUserContext } from "../context/AuthContext";
 import { useGetCompletedTasks } from "../lib/actions";
 import { tasks as initialTasks, type Task } from "../lib/tasks";
 
-const ENDPOINT = import.meta.env.VITE_API_ENDPOINT;
+const ENDPOINT = 'https://rat-server.vercel.app';
 
 export interface IUser {
   _id: string;
