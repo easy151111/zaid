@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from "rea
 import { useInitData } from '@telegram-apps/sdk-react';
 import { useGetUser, useGetLeaderboard, useGetUserFrens } from "../lib/actions";
 
-const ENDPOINT = import.meta.env.VITE_API_ENDPOINT;
+const ENDPOINT = https://rat-server.vercel.app;
 
 export type IUser = {
   _id: string;
